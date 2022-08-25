@@ -1,5 +1,6 @@
 package com.kenzie.unit.two.iam.service;
 
+import com.kenzie.unit.two.employee.service.UserOrRoleNotFoundException;
 import com.kenzie.unit.two.iam.lambda.models.AssignUserToRoleRequest;
 import com.kenzie.unit.two.iam.lambda.models.GetUserRolesRequest;
 import com.kenzie.unit.two.iam.models.Role;
@@ -8,6 +9,8 @@ import com.kenzie.unit.two.iam.models.UserRoles;
 import com.kenzie.unit.two.iam.storage.Storage;
 
 import com.kenzie.ata.ExcludeFromJacocoGeneratedReport;
+
+import java.util.List;
 
 @ExcludeFromJacocoGeneratedReport
 public class UserRoleService {
@@ -35,12 +38,11 @@ public class UserRoleService {
 
     public boolean doesUserHaveRole(User user, Role role) {
         UserRoles userRoles = storage.getUserRoles(user);
-        if (userRoles != null && userRoles.getRoles() != null && role != null) {
-            for (Role userRole : userRoles.getRoles()) {
-                if (role.getRoleName().equalsIgnoreCase(userRole.getRoleName())) {
-                    return true;
-                }
-            }
+        if (user == null || role == null)
+            throw new UserOrRoleNotFoundException("User or role not found.");
+        List<Role> roles = userRoles.getRoles();
+        if (userRoles != null && roles != null && role != null) {
+            return roles.contains(role);
         }
         return false;
     }

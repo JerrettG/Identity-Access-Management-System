@@ -7,8 +7,8 @@
 # For Windows
 # Copy and paste ALL of the properties below into your .bashrc file in your home directory
 
-export GITHUB_TOKEN=''
-export GITHUB_USERNAME=yourusernameinlowercase
+export GITHUB_TOKEN='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'
+export GITHUB_USERNAME=jerrettg
 
 export UNIT_TWO_REPO_NAME=ata-unit-two-project-$GITHUB_USERNAME
 

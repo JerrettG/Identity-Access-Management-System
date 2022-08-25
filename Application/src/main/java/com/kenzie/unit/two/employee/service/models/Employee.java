@@ -1,38 +1,26 @@
 package com.kenzie.unit.two.employee.service.models;
 
 import com.kenzie.ata.ExcludeFromJacocoGeneratedReport;
+import com.kenzie.unit.two.iam.models.Department;
+import com.kenzie.unit.two.iam.models.User;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @ExcludeFromJacocoGeneratedReport
-public class Employee {
-    private final String id;
-    private final String userName;
+public class Employee extends User {
     private final String payCheck;
-    private final String department;
 
-    public Employee(String id, String userName, String department, String payCheck) {
-        this.id = id;
-        this.userName = userName;
-        this.department = department;
+
+    public Employee(UUID id, String userName, Department department, String payCheck) {
+        super(id, userName, department);
         this.payCheck = payCheck;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public String getPayCheck() {
         return payCheck;
     }
 
-    public String getDepartment() {
-        return department;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -43,19 +31,19 @@ public class Employee {
             return false;
         }
         Employee employee = (Employee) o;
-        return Objects.equals(id, employee.id);
+        return Objects.equals(getId(), employee.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
         return "Employee{" +
-                "employeeId='" + id + '\'' +
-                ", employeeName='" + userName + '\'' +
+                "employeeId='" + getId() + '\'' +
+                ", employeeName='" + getUserName() + '\'' +
                 '}';
     }
 }

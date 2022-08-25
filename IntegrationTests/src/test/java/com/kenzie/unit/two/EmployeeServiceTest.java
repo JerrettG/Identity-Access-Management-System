@@ -109,7 +109,7 @@ public class EmployeeServiceTest {
         Employee employee = spy.getEmployeePayCheck(request);
 
         assertEquals(employee.getUserName(), "margaretparis");
-        assertEquals(employee.getDepartment(), department);
+        assertEquals(employee.getDepartment(), department.getName());
     }
 }
 

@@ -6,7 +6,10 @@ import com.kenzie.unit.two.iam.service.DepartmentService;
 import com.kenzie.unit.two.iam.storage.Storage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
@@ -14,16 +17,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DepartmentServiceTest {
+    @Mock
+    private Storage storage;
+
+    @BeforeEach
+    void beforeEach() {
+        MockitoAnnotations.openMocks(this);
+        System.out.println(":)");
+    }
 
     @AfterEach
     void afterEach() {
-        assert(false);
+        System.out.println(":)");
     }
 
     @Test
     void createNewDepartment_TASK_7() {
         //GIVEN
-        DepartmentService departmentService = App.departmentService();
+        DepartmentService departmentService = new DepartmentService(storage);
 
         //WHEN
         String departmentName = RandomStringUtils.random(20);
@@ -38,8 +49,7 @@ class DepartmentServiceTest {
     @Test
     void throwExceptionDepartmentNameAlreadyExists_TASK_7() {
         //GIVEN
-        DepartmentService departmentService = App.departmentService();
-
+        DepartmentService departmentService = new DepartmentService(storage);
         //WHEN
         String departmentName = RandomStringUtils.random(20);
 
@@ -57,8 +67,7 @@ class DepartmentServiceTest {
     @Test
     void getDepartmentByName_TASK_7(){
         //GIVEN
-        DepartmentService departmentService = App.departmentService();
-
+        DepartmentService departmentService = new DepartmentService(storage);
         //WHEN
         String departmentName = RandomStringUtils.random(20);
 
@@ -76,7 +85,7 @@ class DepartmentServiceTest {
     @Test
     void getAllDepartments(){
         //GIVEN
-        DepartmentService departmentService = App.departmentService();
+        DepartmentService departmentService = new DepartmentService(storage);
 
         //WHEN
         String departmentName = RandomStringUtils.random(20);

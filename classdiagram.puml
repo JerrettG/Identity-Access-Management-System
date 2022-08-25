@@ -1,0 +1,12 @@
+class iam {
+    - userService
+}
+class warehouse {
+    - warehouseService
+}
+class employee {
+    - employeeService
+}
+
+iam <.. warehouse dependency
+iam <.. employee dependency

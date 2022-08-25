@@ -3,6 +3,7 @@ package com.kenzie.unit.two.employee.service;
 import com.kenzie.unit.two.employee.lambda.models.ViewEmployeePayCheckRequest;
 import com.kenzie.unit.two.employee.service.models.Employee;
 import com.kenzie.unit.two.iam.entities.Roles;
+import com.kenzie.unit.two.iam.models.Department;
 import com.kenzie.unit.two.iam.models.Role;
 import com.kenzie.unit.two.iam.models.User;
 import com.kenzie.unit.two.iam.service.RoleService;
@@ -11,6 +12,7 @@ import com.kenzie.unit.two.iam.service.UserService;
 
 import com.opencsv.CSVReaderHeaderAware;
 import com.opencsv.exceptions.CsvValidationException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +49,8 @@ public class EmployeeService {
         Role viewPayCheck = roleService.getRoleByRoleName(Roles.VIEW_PAYCHECK.getRoleName());
         User user = userService.getUserByUserName(request.getRequesterUserName());
 
+        if (user == null || viewPayCheck == null)
+            throw new UserOrRoleNotFoundException("User or role not found exception.");
         if (!userRoleService.doesUserHaveRole(user, viewPayCheck)) {
             throw new UnauthorizedException("Employee does not have the required role");
         } else {
@@ -55,7 +59,8 @@ public class EmployeeService {
                 String employeeData = null;
 
                 try {
-                    employeeData = loader.getResource("employee.csv").getPath();
+                    String result = downloadFromUrl(new URL("https://java2-kenzieacademy-donotdelete.s3.amazonaws.com/employee.csv"), "employee.csv");
+                    File file = new File(result);
 
                     if (employeeData == null || employeeData.equals("")) {
                         employeeData = downloadEmployeeData(
@@ -77,7 +82,7 @@ public class EmployeeService {
 
                     if (theCorrectUser(request.getEmployeeUserName(), userName)) {
                         if (inTheSameDepartment(user.getDepartment().getName(), department)) {
-                            employee = new Employee(id, userName, department, payCheck);
+                            employee = new Employee(user.getId(), userName, user.getDepartment(), payCheck);
                         } else {
                             throw new UnauthorizedException("User does not belong to employee's department");
                         }
@@ -89,6 +94,7 @@ public class EmployeeService {
             if (employee == null) {
                 throw new EmployeeNotFoundException("Employee cannot be found");
             }
+            log.info(String.format("Audit: User %s viewed employee %s paycheck information",user.getUserName(), employee.getUserName()));
             return employee;
         }
     }
@@ -134,5 +140,32 @@ public class EmployeeService {
             }
         }
     }
-
+    String downloadFromUrl(URL url, String localFilename) throws IOException {
+        InputStream is = null;
+        FileOutputStream fos = null;
+        String tempDir = System.getProperty("java.io.tmpdir");
+                String outputPath = tempDir + "/" + localFilename;
+        try {
+            //connect
+            URLConnection urlConn = url.openConnection();
+            is = urlConn.getInputStream();
+            fos = new FileOutputStream(outputPath);
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
+            return outputPath;
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } finally {
+                if (fos != null) {
+                    fos.close();
+                }
+            }
+        }
+    }
 }
