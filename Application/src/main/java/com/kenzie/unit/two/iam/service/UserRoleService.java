@@ -37,9 +37,10 @@ public class UserRoleService {
     }
 
     public boolean doesUserHaveRole(User user, Role role) {
-        UserRoles userRoles = storage.getUserRoles(user);
-        if (user == null || role == null)
-            throw new UserOrRoleNotFoundException("User or role not found.");
+       if (user == null || role == null) {
+           throw new UserOrRoleNotFoundException("User or role not found.");
+       }
+       UserRoles userRoles = storage.getUserRoles(user);
         List<Role> roles = userRoles.getRoles();
         if (userRoles != null && roles != null && role != null) {
             return roles.contains(role);

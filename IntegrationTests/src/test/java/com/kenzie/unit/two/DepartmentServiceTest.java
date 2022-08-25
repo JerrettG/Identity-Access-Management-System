@@ -11,10 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 class DepartmentServiceTest {
     @Mock
@@ -57,7 +63,7 @@ class DepartmentServiceTest {
         createDepartmentRequest.setDepartmentName(departmentName);
 
         departmentService.createDepartment(createDepartmentRequest);
-
+        when(storage.getDepartmentByName(any())).thenReturn(new Department(UUID.randomUUID(), "Department"));
 
         //THEN
         assertThrows(IllegalArgumentException.class,
@@ -75,7 +81,7 @@ class DepartmentServiceTest {
         createDepartmentRequest.setDepartmentName(departmentName);
 
         Department department = departmentService.createDepartment(createDepartmentRequest);
-
+        when(storage.getDepartmentByName(anyString())).thenReturn(department);
 
         //THEN
         Department queriedDepartment = departmentService.getDepartmentByName(departmentName);
@@ -94,7 +100,7 @@ class DepartmentServiceTest {
         createDepartmentRequest.setDepartmentName(departmentName);
 
         Department department = departmentService.createDepartment(createDepartmentRequest);
-
+        when(storage.getDepartments()).thenReturn(new ArrayList<>(Arrays.asList(department)));
         //THEN
         List<Department> departments = departmentService.getDepartments();
         assertTrue(departments.contains(department));
